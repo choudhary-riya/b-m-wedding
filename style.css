@@ -29,20 +29,38 @@ html, body {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* ============ SCREENS ============ */
+/* ============ SCREENS - SMOOTH BLUR/FADE TRANSITIONS ============ */
 .screen {
     position: fixed;
     inset: 0;
-    display: none;
+    display: flex;
+    flex-direction: column;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    visibility: hidden;
+    filter: blur(20px);
+    transform: scale(1.04);
+    transition: 
+        opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0s linear 1.2s;
+    pointer-events: none;
     overflow: hidden;
+    z-index: 1;
 }
 
 .screen.active {
-    display: flex;
-    flex-direction: column;
     opacity: 1;
+    visibility: visible;
+    filter: blur(0);
+    transform: scale(1);
+    transition: 
+        opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0s linear;
+    pointer-events: auto;
+    z-index: 2;
 }
 
 /* ============ MUTE BUTTON ============ */
@@ -136,25 +154,24 @@ html, body {
     text-align: center;
 }
 
-/* ============ PAGE 2: GAME (4x4 GRID) ============ */
+/* ============ PAGE 2: GAME (4x4 GRID - BIGGER CARDS) ============ */
 .game-screen {
     background: 
         linear-gradient(135deg, #c5dde8 0%, #d8e8f0 50%, #c5dde8 100%);
     align-items: center;
     justify-content: space-between;
-    padding: 70px 12px 12px;
+    padding: 55px 8px 8px;
     min-height: 100vh;
     height: 100vh;
     position: relative;
 }
 
-/* Add decorative floral border using template2 */
 .game-screen::before {
     content: '';
     position: absolute;
     inset: 0;
     background: url('template2.png') center/cover no-repeat;
-    opacity: 0.25;
+    opacity: 0.22;
     z-index: 0;
     pointer-events: none;
 }
@@ -166,19 +183,20 @@ html, body {
 
 .game-info {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.5rem;
     justify-content: center;
     width: 100%;
     flex-wrap: wrap;
+    margin-bottom: 4px;
 }
 
 .info-pill {
     background: rgba(61, 74, 24, 0.92);
     color: white;
-    padding: 0.4rem 0.95rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 30px;
     border: 2px solid var(--cream-yellow);
-    font-size: clamp(0.85rem, 3vw, 1rem);
+    font-size: clamp(0.8rem, 2.8vw, 0.95rem);
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     font-weight: 500;
     white-space: nowrap;
@@ -191,25 +209,26 @@ html, body {
     font-weight: 700;
 }
 
-/* The 4x4 grid */
+/* The 4x4 grid - LARGER cards with portrait orientation */
 .game-board {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
-    gap: clamp(5px, 1.5vw, 10px);
-    width: 100%;
-    max-width: min(95vw, 75vh);
-    aspect-ratio: 1 / 1;
+    gap: clamp(4px, 1vw, 8px);
+    width: min(98vw, calc(82vh * 3 / 4));
+    aspect-ratio: 3 / 4;
     margin: auto 0;
+    padding: 0;
 }
 
 .game-footer {
     text-align: center;
     color: var(--olive);
     font-family: 'Pinyon Script', cursive;
-    font-size: clamp(1.1rem, 4vw, 1.6rem);
-    margin-top: 0.5rem;
+    font-size: clamp(1rem, 3.5vw, 1.4rem);
+    margin-top: 0.3rem;
     text-shadow: 0 2px 4px rgba(255,255,255,0.7);
+    line-height: 1;
 }
 
 .game-footer .amp-small {
@@ -222,7 +241,7 @@ html, body {
     position: relative;
     cursor: pointer;
     transform-style: preserve-3d;
-    transition: transform 0.6s;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     perspective: 1000px;
     -webkit-tap-highlight-color: transparent;
 }
@@ -232,12 +251,12 @@ html, body {
 }
 
 .card.matched {
-    animation: matchGlow 0.7s ease;
+    animation: matchGlow 0.9s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
 }
 
 .card.firecracker {
-    animation: firecracker 1s ease;
+    animation: firecracker 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes matchGlow {
@@ -255,7 +274,7 @@ html, body {
     position: absolute;
     inset: 0;
     backface-visibility: hidden;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -265,20 +284,20 @@ html, body {
 
 .card-back {
     background: linear-gradient(135deg, var(--cream-yellow), var(--cream-light));
-    border: 2px solid var(--gold);
+    border: 1.5px solid var(--gold);
     color: var(--gold-dark);
 }
 
 .card-back::before {
     content: '✦';
-    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
     color: var(--gold-dark);
     font-family: 'Pinyon Script', cursive;
 }
 
 .card-front {
     background: var(--cream-light);
-    border: 2px solid var(--gold);
+    border: 1.5px solid var(--gold);
     transform: rotateY(180deg);
 }
 
@@ -286,15 +305,14 @@ html, body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-/* ============ PAGE 3: INVITE REVEAL ============ */
+/* ============ PAGE 3: INVITE REVEAL (ON TEMPLATE) ============ */
 .invite-screen {
     background: var(--blue-light);
     align-items: center;
     justify-content: center;
-    position: fixed;
-    inset: 0;
 }
 
 .invite-bg {
@@ -307,55 +325,46 @@ html, body {
     background: var(--blue-light);
 }
 
-/* On mobile portrait, contain the bg so flowers/borders stay visible */
-@media (orientation: portrait) {
-    .invite-bg {
-        object-fit: cover;
-    }
-}
-
-.invite-overlay {
+/* Invite text directly on template3 - no card wrapper */
+.invite-content {
     position: relative;
     z-index: 2;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-}
-
-.invite-card {
-    background: rgba(245, 226, 168, 0.96);
-    border: 3px solid var(--gold);
-    border-radius: 20px;
-    padding: clamp(1.2rem, 4vw, 2.5rem) clamp(1rem, 5vw, 2.5rem);
     text-align: center;
-    max-width: 95%;
-    max-height: 92vh;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-    animation: revealCard 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    overflow-y: auto;
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+    animation: gentleReveal 1.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+    /* Subtle text shadow for readability on the template */
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
 }
 
-@keyframes revealCard {
-    from { opacity: 0; transform: scale(0.5) rotate(-3deg); }
-    to { opacity: 1; transform: scale(1) rotate(0); }
+@keyframes gentleReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
 }
 
 .invite-blessing {
     font-family: 'Pinyon Script', cursive;
     color: var(--gold-dark);
-    font-size: clamp(0.95rem, 3.5vw, 1.3rem);
-    margin-bottom: 0.4rem;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    margin-bottom: 0.6rem;
+    opacity: 0.95;
 }
 
 .invite-title {
     font-family: 'Pinyon Script', cursive;
     color: var(--olive);
-    font-size: clamp(2rem, 8vw, 3.2rem);
-    margin-bottom: 0.4rem;
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    margin-bottom: 0.3rem;
     line-height: 1;
+    text-shadow: 0 2px 6px rgba(255, 255, 255, 0.7);
 }
 
 .invite-divider {
@@ -363,49 +372,54 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin: 0.7rem auto;
-    width: 60%;
+    margin: 1rem auto;
+    width: 50%;
+    max-width: 250px;
 }
 
 .invite-divider span:not(.diamond) {
     flex: 1;
-    height: 1px;
+    height: 1.5px;
     background: var(--gold);
+    box-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
 }
 
 .invite-divider .diamond {
-    color: var(--gold);
-    font-size: 0.7em;
+    color: var(--gold-dark);
+    font-size: 0.8em;
 }
 
 .invite-names {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    margin: 0.7rem 0;
+    gap: 0.7rem;
+    margin: 1rem 0 1.2rem;
     flex-wrap: wrap;
 }
 
 .invite-names .name {
-    font-size: clamp(1.3rem, 5.5vw, 2.2rem);
-    color: var(--olive);
+    font-size: clamp(1.5rem, 6vw, 2.6rem);
+    color: var(--olive-dark);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
 }
 
 .invite-names .amp {
     font-family: 'Pinyon Script', cursive;
     color: var(--gold-dark);
-    font-size: clamp(1.7rem, 7vw, 2.8rem);
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    font-weight: 400;
 }
 
 .invite-date {
-    font-size: clamp(1.15rem, 4.5vw, 1.7rem);
-    color: var(--olive);
+    font-size: clamp(1.3rem, 5vw, 1.9rem);
+    color: var(--olive-dark);
     font-weight: 700;
-    margin: 0.7rem 0 0.3rem;
+    margin: 1rem 0 0.4rem;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
 }
 
 .invite-date sup {
@@ -414,36 +428,21 @@ html, body {
 }
 
 .invite-venue {
-    font-size: clamp(0.9rem, 3vw, 1.15rem);
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
     color: var(--olive);
     font-style: italic;
-    line-height: 1.5;
-    margin-bottom: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
 }
 
 .invite-message {
-    font-size: clamp(0.85rem, 2.8vw, 1rem);
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
     color: var(--olive-dark);
-    margin-bottom: 1rem;
     font-style: italic;
+    margin-top: 1rem;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
 }
-
-.share-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.4rem;
-    background: #25D366;
-    color: white;
-    text-decoration: none;
-    border-radius: 30px;
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    font-weight: 600;
-    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-    transition: transform 0.2s;
-}
-
-.share-button:active { transform: scale(0.96); }
 
 /* ============ CONFETTI ============ */
 .confetti-container {

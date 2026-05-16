@@ -54,12 +54,13 @@ function shuffle(array) {
     return arr;
 }
 
-// Show specific screen
+// Show specific screen with smooth fade
 function showScreen(screenId) {
     [elements.welcomeScreen, elements.gameScreen, elements.inviteScreen].forEach(s => {
         s.classList.remove('active');
     });
-    setTimeout(() => $(screenId).classList.add('active'), 50);
+    // Delay the new screen activation slightly so old one starts fading first
+    setTimeout(() => $(screenId).classList.add('active'), 200);
 }
 
 // Create a card element
@@ -158,7 +159,8 @@ function handleMatch() {
     if (gameState.matches === gameState.totalPairs) {
         lastCard.classList.add('firecracker');
         clearInterval(gameState.timerInterval);
-        setTimeout(() => showInviteScreen(), 1100);
+        // Give the firecracker animation time to complete before transitioning
+        setTimeout(() => showInviteScreen(), 1500);
     }
 }
 
