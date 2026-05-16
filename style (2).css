@@ -1,0 +1,489 @@
+/* ============================================
+   Bhavana & Mahender - Save the Date Game
+   Mobile-first 4×4 grid with 8 image pairs
+   ============================================ */
+
+:root {
+    --blue-light: #c5dde8;
+    --blue-soft: #b6d4e3;
+    --blue-deep: #8eb4c5;
+    --cream-yellow: #f0d989;
+    --cream-light: #f5e2a8;
+    --cream-warm: #faf3d6;
+    --olive: #5d6f23;
+    --olive-dark: #3d4a18;
+    --gold: #c89855;
+    --gold-dark: #a17e1a;
+    --text-dark: #3d4a18;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--blue-light);
+    color: var(--text-dark);
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ============ SCREENS ============ */
+.screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+}
+
+/* ============ MUTE BUTTON ============ */
+.mute-button {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(61, 74, 24, 0.92);
+    color: white;
+    border: 2px solid var(--cream-yellow);
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.mute-button:active { transform: scale(0.92); }
+
+/* ============ PAGE 1: WELCOME ============ */
+.welcome-screen {
+    background: var(--blue-light);
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+}
+
+.welcome-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    z-index: 0;
+    background: var(--blue-light);
+}
+
+.welcome-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 1rem 6vh;
+}
+
+.start-button {
+    padding: 0.95rem 2rem;
+    background: var(--olive);
+    color: var(--cream-yellow);
+    border: 3px solid var(--gold);
+    border-radius: 50px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(61, 74, 24, 0.35);
+    margin-bottom: 0.8rem;
+    animation: pulse 2s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.start-button:active { transform: scale(0.96); }
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 8px 24px rgba(61, 74, 24, 0.3); }
+    50% { box-shadow: 0 8px 32px rgba(200, 152, 85, 0.7); }
+}
+
+.welcome-hint {
+    color: var(--olive);
+    font-size: clamp(0.8rem, 3vw, 1rem);
+    font-style: italic;
+    background: rgba(245, 226, 168, 0.92);
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    border: 1px solid var(--gold);
+    text-align: center;
+}
+
+/* ============ PAGE 2: GAME (4x4 GRID - BIGGER CARDS) ============ */
+.game-screen {
+    background: 
+        linear-gradient(135deg, #c5dde8 0%, #d8e8f0 50%, #c5dde8 100%);
+    align-items: center;
+    justify-content: space-between;
+    padding: 55px 8px 8px;
+    min-height: 100vh;
+    height: 100vh;
+    position: relative;
+}
+
+.game-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('template2.png') center/cover no-repeat;
+    opacity: 0.22;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.game-info, .game-board, .game-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.game-info {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.info-pill {
+    background: rgba(61, 74, 24, 0.92);
+    color: white;
+    padding: 0.35rem 0.85rem;
+    border-radius: 30px;
+    border: 2px solid var(--cream-yellow);
+    font-size: clamp(0.8rem, 2.8vw, 0.95rem);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.info-pill strong {
+    color: var(--cream-yellow);
+    font-size: 1.1em;
+    margin: 0 0.15rem;
+    font-weight: 700;
+}
+
+/* The 4x4 grid - LARGER cards with portrait orientation */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: clamp(4px, 1vw, 8px);
+    width: min(98vw, calc(82vh * 3 / 4));
+    aspect-ratio: 3 / 4;
+    margin: auto 0;
+    padding: 0;
+}
+
+.game-footer {
+    text-align: center;
+    color: var(--olive);
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(1rem, 3.5vw, 1.4rem);
+    margin-top: 0.3rem;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.7);
+    line-height: 1;
+}
+
+.game-footer .amp-small {
+    color: var(--gold-dark);
+    font-size: 1.2em;
+}
+
+/* ============ CARDS ============ */
+.card {
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    perspective: 1000px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card[aria-pressed="true"] {
+    transform: rotateY(180deg);
+}
+
+.card.matched {
+    animation: matchGlow 0.7s ease;
+    pointer-events: none;
+}
+
+.card.firecracker {
+    animation: firecracker 1s ease;
+}
+
+@keyframes matchGlow {
+    0%, 100% { transform: scale(1) rotateY(180deg); filter: brightness(1); }
+    50% { transform: scale(1.08) rotateY(180deg); filter: brightness(1.3) drop-shadow(0 0 12px var(--gold)); }
+}
+
+@keyframes firecracker {
+    0% { transform: scale(1) rotateY(180deg); }
+    30% { transform: scale(1.3) rotateY(180deg); filter: brightness(1.8); }
+    100% { transform: scale(1) rotateY(180deg); filter: brightness(1); }
+}
+
+.card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.card-back {
+    background: linear-gradient(135deg, var(--cream-yellow), var(--cream-light));
+    border: 1.5px solid var(--gold);
+    color: var(--gold-dark);
+}
+
+.card-back::before {
+    content: '✦';
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    color: var(--gold-dark);
+    font-family: 'Pinyon Script', cursive;
+}
+
+.card-front {
+    background: var(--cream-light);
+    border: 1.5px solid var(--gold);
+    transform: rotateY(180deg);
+}
+
+.card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ============ PAGE 3: INVITE REVEAL ============ */
+.invite-screen {
+    background: var(--blue-light);
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+}
+
+.invite-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    background: var(--blue-light);
+}
+
+/* On mobile portrait, contain the bg so flowers/borders stay visible */
+@media (orientation: portrait) {
+    .invite-bg {
+        object-fit: cover;
+    }
+}
+
+.invite-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.invite-card {
+    background: rgba(245, 226, 168, 0.96);
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+    padding: clamp(1.2rem, 4vw, 2.5rem) clamp(1rem, 5vw, 2.5rem);
+    text-align: center;
+    max-width: 95%;
+    max-height: 92vh;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+    animation: revealCard 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow-y: auto;
+}
+
+@keyframes revealCard {
+    from { opacity: 0; transform: scale(0.5) rotate(-3deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.invite-blessing {
+    font-family: 'Pinyon Script', cursive;
+    color: var(--gold-dark);
+    font-size: clamp(0.95rem, 3.5vw, 1.3rem);
+    margin-bottom: 0.4rem;
+}
+
+.invite-title {
+    font-family: 'Pinyon Script', cursive;
+    color: var(--olive);
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    margin-bottom: 0.4rem;
+    line-height: 1;
+}
+
+.invite-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.7rem auto;
+    width: 60%;
+}
+
+.invite-divider span:not(.diamond) {
+    flex: 1;
+    height: 1px;
+    background: var(--gold);
+}
+
+.invite-divider .diamond {
+    color: var(--gold);
+    font-size: 0.7em;
+}
+
+.invite-names {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 0.7rem 0;
+    flex-wrap: wrap;
+}
+
+.invite-names .name {
+    font-size: clamp(1.3rem, 5.5vw, 2.2rem);
+    color: var(--olive);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.invite-names .amp {
+    font-family: 'Pinyon Script', cursive;
+    color: var(--gold-dark);
+    font-size: clamp(1.7rem, 7vw, 2.8rem);
+}
+
+.invite-date {
+    font-size: clamp(1.15rem, 4.5vw, 1.7rem);
+    color: var(--olive);
+    font-weight: 700;
+    margin: 0.7rem 0 0.3rem;
+}
+
+.invite-date sup {
+    font-size: 0.6em;
+    color: var(--gold-dark);
+}
+
+.invite-venue {
+    font-size: clamp(0.9rem, 3vw, 1.15rem);
+    color: var(--olive);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 0.9rem;
+}
+
+.invite-message {
+    font-size: clamp(0.85rem, 2.8vw, 1rem);
+    color: var(--olive-dark);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    background: #25D366;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    transition: transform 0.2s;
+}
+
+.share-button:active { transform: scale(0.96); }
+
+/* ============ CONFETTI ============ */
+.confetti-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: confettiFall 3s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-30px) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(110vh) rotate(720deg); }
+}
+
+/* ============ LANDSCAPE TWEAKS ============ */
+@media (orientation: landscape) and (max-height: 600px) {
+    .game-screen {
+        padding-top: 60px;
+    }
+    .game-board {
+        max-width: min(85vh, 80vw);
+    }
+    .game-footer {
+        font-size: 1rem;
+    }
+}
+
+/* Tablet & up */
+@media (min-width: 768px) {
+    .game-board {
+        max-width: 600px;
+    }
+}
